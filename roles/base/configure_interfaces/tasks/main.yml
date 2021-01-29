@@ -55,6 +55,7 @@
       address: "{{ item.1.address }}"
       maskOrPrefix: "{{ item.1.maskOrPrefix }}"
       allowManagement: "{{ item.1.allowManagement }}"
+      overrideSubnetChecking: "{{ item.1.overrideSubnetChecking | default(False) }}"
       enabled: "{{ item.1.enabled | default(False) }}"
   when: item.0.label == label and item.1.address == address
   loop: "{{ interfaces | subelements('addresses', {'skip_missing': True}) }}"
