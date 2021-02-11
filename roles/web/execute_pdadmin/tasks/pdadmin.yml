@@ -1,12 +1,19 @@
 - name: Run PDAdmin commands
-  ibm.isam.isamadmin:
+  ibm.isam.isam:
     log: "{{ log_level | default(omit) }}"
-    isamuser: "{{ admin_id }}"
-    isampwd: "{{ admin_pwd }}"
-    isamdomain: "{{ admin_domain }}"
-    commands: "{{ pdadmin_commands | default([]) }} + {{ include_pdadmin_commands | default([]) }}"
+    force: "{{ force | default(omit) }}"
+    action: ibmsecurity.isam.web.runtime.pdadmin.execute
+    isamapi:
+      isamUser: 
+        username: "{{ admin_id }}"
+        password: "{{ admin_pwd }}"
+      admin_domain: "{{ admin_domain }}"
+      commands: "{{ pdadmin_commands | default([]) }} + {{ include_pdadmin_commands | default([]) }}"
   ignore_errors: true
   register: ret_obj
+
+- debug:
+    msg: "{{ ret_obj }}"
 
 - name: Output of PDAdmin command execution
   debug: msg="{{ ret_obj['data']['result'].split('\n') }}"
