@@ -1,7 +1,6 @@
 - name: Run PDAdmin commands
   ibm.isam.isamadmin:
     log: "{{ log_level | default(omit) }}"
-    force: "{{ force | default(omit) }}"
     isamuser: "{{ admin_id }}"
     isampwd: "{{ admin_pwd }}"
     isamdomain: "{{ admin_domain }}"
