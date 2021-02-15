@@ -1,0 +1,52 @@
+---
+
+# main task to configure runtime tuning parameters
+
+- name: Help INFO (-e help=true)
+  pause:
+    echo: yes
+    prompt: |
+      NAME
+        configure_felb
+
+      DESCRIPTION
+        Role to configure runtime tuning parameter
+
+      STEPS
+        1) Configure front end load balancer
+        2) Commit changes
+
+      EXAMPLES
+        ansible-playbook -i [...] playbooks/ansible_collections/base/configure_felb.yml 
+
+      INVENTORY
+      ==========
+      # configure runtime tunings
+      felb_config:
+        enabled: true
+        debug: false
+        logging:
+          local: true
+        ha:
+          enabled: false
+        services: []
+        attributes:
+          - name: "tune.ssl.default-dh-parm"
+            value: 2048
+        ssl:
+          elabled: false
+      ==========
+
+      INTERACTION
+        ENTER         = continue
+        Ctrl+C + 'C'  = continue
+        Ctrl+C + 'A'  = abort
+  when: help is defined
+
+- name: Configure front end load balancer
+  ibm.isam.isam:
+    log: "{{ log_level | default(omit) }}"
+    force: "{{ force | default(omit) }}"
+    action: "ibmsecurity.isam.base.network.felb.config.set"
+    isamapi: "{{ felb_config }}"
+  notify: Commit Changes

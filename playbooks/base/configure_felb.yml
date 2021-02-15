@@ -1,0 +1,9 @@
+---
+# Configure
+#   configure front end load balancer
+- hosts: "{{ hosts | default('all')}}"
+  serial: "{{ serial | default('100%')}}"
+  gather_facts: no
+  roles:
+    - role: ibm.isam.base.configure_felb
+      tags: configure_felb
