@@ -1,0 +1,17 @@
+---
+
+# Default variables for configuration of front-end load balancer
+felb_config:
+  enabled: false
+  debug: false
+  logging: 
+    local: true
+  ha:
+    enabled: false
+  services: []
+  attributes:
+    - name: "tune.ssl.default-dh-parm"
+      value: 2048
+  ssl:
+    elabled: false
+
