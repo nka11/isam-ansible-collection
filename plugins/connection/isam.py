@@ -144,7 +144,7 @@ class Connection(NetworkConnectionBase):
 
             self.queue_message(
                 'vvv',
-                "Connection to IBM ISAM Appliance established for user: {0} -> {1}".format(user,
+                "Establishing connection to IBM ISAM Appliance for user: {0} -> {1} ...".format(user,
                                                                                            'https://{0}:{1}'.format(
                                                                                                host, port)
                                                                                            )
@@ -165,6 +165,10 @@ class Connection(NetworkConnectionBase):
             #    #self.isam_server = ISAMApplianceAdminProxy(adminProxyHostname=adminProxyHostname, user=u, hostname=appliance, adminProxyProtocol=adminProxyProtocol, adminProxyPort=adminProxyPort, adminProxyApplianceShortName=adminProxyApplianceShortName)
             #    pass
             self.isam_server = ISAMAppliance(hostname=host, user=u, lmi_port=port)
+            self.queue_message(
+                'vvv',
+                "Connection established to IBM ISAM Appliance: https://{0}@{1}:{2}".format(user, host, port)
+            )
             self._sub_plugin = {'name': 'isam_server', 'obj': self.isam_server}
 
             self._connected = True
