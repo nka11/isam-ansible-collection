@@ -62,10 +62,8 @@
     file_updates: "{{ file_update_result.results | selectattr('ansible_facts','defined') | map(attribute='ansible_facts.file_update_item') | list }}"
 
 - name: "[sync_up] Define dynamic management_root containing directories and files to be created/uploaded"
-  vars:
-    filter_current_management_root: "[? inst_name == '{{ item.0.inst_name }}'].management_root"
   set_fact:
-    management_root: "{{ hostvars[inventory_hostname].instances | json_query(filter_current_management_root) }} + {{ directory_updates }} + {{ file_updates }}"
+    sync_up_management_root: "{{ directory_updates }} + {{ file_updates }}"
 
 - name: "[sync_up] Create management root directories"
   ibm.isam.isam:
@@ -77,7 +75,7 @@
       id: "{{ sync_create.target.split('/')[0] }}"
       name: "{{ sync_create.target | regex_replace(item.1.target.split('/')[0]+'/','') }}"
   when: sync_create.mgmt_action == 'create' and sync_create.type == 'directory'
-  with_items: "{{ management_root }}"
+  with_items: "{{ sync_up_management_root }}"
   loop_control:
     label: "{ 'mgmt_action': \"{{ sync_create.mgmt_action }}\", 'inst_name': \"{{ item.0.inst_name }}\", 'target': \"{{ sync_create.target | default(None) }}\", 'type': \"{{ sync_create.type | default(None) }}\")"
     loop_var: sync_create
@@ -93,7 +91,7 @@
       id: "{{ sync_upload.target }}"
       filename: "{{ sync_upload.file if((sync_upload.file | regex_search('^/') == '/') ) else (inventory_dir +'/'+ sync_upload.file) }}"
   when: sync_upload.mgmt_action == 'upload' and sync_upload.type == 'file'
-  with_items: "{{ management_root }}"
+  with_items: "{{ sync_up_management_root }}"
   loop_control:
     label: "{ 'mgmt_action': \"{{ sync_upload.mgmt_action }}\", 'inst_name': \"{{ item.0.inst_name }}\", 'filename': \"{{ (sync_upload.target | basename) }}\", 'target': \"{{ (sync_upload.target | default(None)) | dirname }}\", 'type': \"{{ sync_upload.type | default(None) }}\")"
     loop_var: sync_upload
